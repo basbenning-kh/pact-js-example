@@ -38,7 +38,7 @@ server.post('/movies', (req, res) => {
 
   const result = schema.validate(req.body);
   const movie = {
-    id: movies[movies.length - 1].id + 1,
+    id: movies.getLastMovie().id + 1,
     name: req.body.name,
     year: req.body.year,
   };
@@ -46,21 +46,20 @@ server.post('/movies', (req, res) => {
   if (result.error) res.status(404).send(result.error.details[0]);
 
   if (movies.getMovieByName(req.body.name)) {
-    res.send(`Movie ${req.body.name} already exists`);
+    res.status(409).send({ message: `Movie ${req.body.name} already exists` });
   } else {
     movies.insertMovie(movie);
-    res.send(movie);
+    res.status(201).send(movie);
   }
 });
 
 server.delete('/movie/:id', (req, res) => {
   const movie = movies.getMovieById(req.params.id);
   if (!movie) {
-    res.status(404).send(`Movie ${req.params.id} not found`);
+    res.status(404).send({ message: `Movie ${req.params.id} not found` });
   } else {
-    const index = movies.indexOf(movie);
-    movies.splice(index, 1);
-    res.send(`Movie ${req.params.id} has been deleted`);
+    movies.deleteMovie(movie);
+    res.send({ message: `Movie ${req.params.id} has been deleted` });
   }
 });
 

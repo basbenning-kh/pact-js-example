@@ -19,8 +19,17 @@ class Movie {
     this.movies.push(movie);
   }
 
+  deleteMovie(movie) {
+    const index = this.movies.indexOf(movie);
+    this.movies.splice(index, 1);
+  }
+
   getFirstMovie() {
     return this.movies[0];
+  }
+
+  getLastMovie() {
+    return this.movies[this.movies.length - 1];
   }
 }
 
